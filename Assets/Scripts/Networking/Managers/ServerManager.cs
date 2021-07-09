@@ -47,7 +47,7 @@ namespace Berserk.Networking.Managers
                     
             };
             
-            FailedToConnect += () => Debug.Log("бРАТАН, вруби сервак");
+            FailedToConnect += () => Debug.Log("<color=#D35400> Дружище, вруби сервак. </color>");
             
             client.OnConnected = ConectedToServer;
             client.OnData = ServerBinaryResponse;  
@@ -67,11 +67,11 @@ namespace Berserk.Networking.Managers
         /// затем в объект в зависмости от MessageType словаря NetworkDictionary
         /// </summary>
         /// <param name="message"></param>
-        private void ServerBinaryResponse(ArraySegment<byte> byteArray)
+        private void ServerBinaryResponse(ArraySegment<byte> byteArray) 
         {
-            Debug.Log($"ServerBinaryResponse :\n" + Encoding.UTF8.GetString(byteArray.Array));
-
-            JsonMessage clientMessage = JsonMessage.Deserialize(Encoding.UTF8.GetString(byteArray.Array));
+            Debug.Log($"<color=#1C98F9>Server object response :</color>\n" + Encoding.UTF8.GetString(byteArray.Array,byteArray.Offset,byteArray.Count));
+            
+            JsonMessage clientMessage = JsonMessage.Deserialize(Encoding.UTF8.GetString(byteArray.Array,byteArray.Offset,byteArray.Count));
             //Debug.Log(Type.GetType(clientMessage.type));
             ServerResponseObjectEvent(clientMessage.Value, Type.GetType(clientMessage.Type));
         }
@@ -83,7 +83,7 @@ namespace Berserk.Networking.Managers
         public void Send_Object_ToServer<Template>(Template objMessage) //=>
 
         {
-            Debug.Log("Send_Object_ToServer\n"+JsonMessage.Serialize(
+            Debug.Log("<color=#16A085>Sended object to server: </color>\n"+JsonMessage.Serialize(
                 JsonMessage.FromValue<Template>(objMessage)));
             
             client.Send(
@@ -110,7 +110,7 @@ namespace Berserk.Networking.Managers
         /// </summary>
         public void DisconectedFromServer()
         {
-            Debug.Log("Client Disconected");
+            Debug.Log("<color=#DC7633>Клиент отключён от сервера</color>");
             //Action serverShutDown;
         }
         

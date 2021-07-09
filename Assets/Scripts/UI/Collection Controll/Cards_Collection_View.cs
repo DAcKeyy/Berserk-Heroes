@@ -12,11 +12,13 @@ public class Cards_Collection_View : MonoBehaviour
     [SerializeField] private List<CardDisplay> cardDisplays;
     [SerializeField] private TMP_Text currentPageText;
     [SerializeField] private TMP_Text maxPageText;
+    [SerializeField] private TMP_Text cardText;
     [SerializeField] private Button PrevPageButton;
     [SerializeField] private Button NextPageButton;
     private List<List<Card>> pagesList = new List<List<Card>>();
     [SerializeField]private List<Card> _cards = new List<Card>();
     private int _currentPage;
+    public Action<Card> ClickedCard= delegate {  };
     public List<Card> Cards
     {
         get => _cards;
@@ -43,10 +45,15 @@ public class Cards_Collection_View : MonoBehaviour
     {
         CurrentPage = 1;    
         ShowPage(0);
+        foreach (var VARIABLE in cardDisplays)
+        {
+            VARIABLE.OnCardPressed += () => ClickedCard(VARIABLE.CardData);
+        }
     }
 
     public void AddCardListToCurrent(List<Card> addCards)
     {
+        Debug.Log("AddCardListToCurrent");
         _cards.AddRange(addCards);
         pagesList = SplitList(_cards,8);
         maxPageText.text = pagesList.Count.ToString();
@@ -60,6 +67,7 @@ public class Cards_Collection_View : MonoBehaviour
             PrevPageButton.gameObject.SetActive(false);
             NextPageButton.gameObject.SetActive(false);
             maxPageText.text = "1";
+            cardText.text = _cards.Count.ToString();
             foreach (var cardDisplay in cardDisplays)
             {   
                 cardDisplay.gameObject.SetActive(false);
@@ -76,14 +84,15 @@ public class Cards_Collection_View : MonoBehaviour
         else NextPageButton.gameObject.SetActive(true);
         
         CurrentPage = page;
-
+        cardText.text = _cards.Count.ToString();
+        
         for (int i = 0; i < cardDisplays.Count; i++)
         { 
             //Debug.Log($"cardDisplays.Count{cardDisplays.Count} , pagesList.cOUNT{pagesList.Count} ,pagesList[0].Count {pagesList[0].Count}, pagesList[page-1][{i}] {pagesList[page-1][i]}");
             cardDisplays[i].gameObject.SetActive(true);
             if (i < pagesList[page - 1].Count)
             {
-                Debug.Log($"i:{i} , pagesList[page - 1].Count {pagesList[page - 1].Count} , pagesList[page-1][i] {pagesList[page-1][i]}");
+                
                 cardDisplays[i].InitCard(pagesList[page-1][i]);
             }
             else cardDisplays[i].gameObject.SetActive(false);

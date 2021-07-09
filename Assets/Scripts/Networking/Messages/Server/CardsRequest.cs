@@ -11,12 +11,12 @@ namespace Berserk.Messaging.Messages
      */
     class CardsRequest
     {
-        public CardType? type;
-        public CardClass? @class;
-        public CardElement? element;
-        public int? cost;
-        public string cardName;
-        public int RequestID;
+        public CardType? type { get; set; }
+        public CardClass? @class { get; set; }
+        public CardElement? element { get; set; }
+        public int? cost { get; set; }
+        public string cardName { get; set; }
+        public int RequestID { get; set; }
 
         public CardsRequest()
         {   

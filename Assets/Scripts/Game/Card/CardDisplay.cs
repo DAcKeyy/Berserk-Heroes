@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -22,11 +23,14 @@ namespace Game.Card
         [SerializeField]private CardDisplayRareness rarenessScript;
         [SerializeField]private CardDisplayWrapper wrapperScript;
         [SerializeField]private CardDisplayURLimage imageScript;
+        [SerializeField] private CardSelected CardSelectedScript;
 
         #endregion
         [Header("Данные карты")]
         [SerializeField]private Card card;
 
+        public Action OnCardPressed = delegate {  };
+        
         //аксессор данных о карте 
         public Card CardData
         {
@@ -49,7 +53,7 @@ namespace Game.Card
 
         private void OnEnable()
         {
-        
+            CardSelectedScript.CardMouseUp += OnCardPressed;
         }
 
         public void InitCard(Card value)

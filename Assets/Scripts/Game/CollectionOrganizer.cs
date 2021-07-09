@@ -18,7 +18,8 @@ namespace Game
         [SerializeField] private Cards_Collection_View collectionFieldViewScript;
 
         public List<Card.Card> cardCollection;
-        public List<Deck> decks;
+        public List<GameDeck> decks;
+        private List<int> downloadedPages = new List<int>();
         private int currentRequestID =0;
         private CardType? _type;
         private CardClass? _class;
@@ -55,16 +56,24 @@ namespace Game
             {
                 if (TYPE == typeof(Message))
                 {
-                    if (Type.GetType(OBJ.ToObject<Message>().MessageBody.Type) == typeof(Cards_Data))
+                    Message mes = OBJ.ToObject<Message>();
+                    if (Type.GetType(mes.MessageBody.Type) == typeof(Cards_Data))
                     {
-                        Cards_Data DATA = OBJ.ToObject<Message>().MessageBody.Value.ToObject<Cards_Data>();
+                        Cards_Data DATA = mes.MessageBody.Value.ToObject<Cards_Data>();
 
                         if (DATA.RequestID == currentRequestID)
                         {
+                            if (mes.Text.Contains("cards not founded"))
+                            {
+                                //logik
+                                SetCards(new List<Card.Card>());
+                            }
                             if (DATA.max_page == 1) SetCards(DATA.cards);
                         
                             if (DATA.max_page > 1)
                             {
+                                if(downloadedPages.Contains(DATA.page)) return;
+                                else downloadedPages.Add(DATA.page);
                                 if (DATA.page == 1) SetCards(DATA.cards);
                                 else AddCards(DATA.cards);
                             }
@@ -90,6 +99,7 @@ namespace Game
             if (cost == 0) cost = null;
             if (string.IsNullOrEmpty(cardName)) cardName = null;
             
+            downloadedPages.Clear();
             currentRequestID = Random.Range(1, 100000);
             ServerManager.ServerManagerInstance.Send_Object_ToServer(
                 new Message("Command GetCards", false,(uint)StaticPrefs.UserID, "", 
@@ -99,6 +109,7 @@ namespace Game
 
         public void GetAllCards()
         {
+            downloadedPages.Clear();
             currentRequestID = Random.Range(1, 100000);
             ServerManager.ServerManagerInstance.Send_Object_ToServer(
                 new Message("Command GetCards", false,(uint)StaticPrefs.UserID, "", 
@@ -120,7 +131,7 @@ namespace Game
         
         }
 
-        public void SetDeck(uint ownerId, string accessToken, Deck deck)
+        public void SetDeck(uint ownerId, string accessToken, GameDeck gameDeck)
         {
         
         }

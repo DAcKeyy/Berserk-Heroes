@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using UnityEngine;
 
 namespace Berserk.Messaging
 {
@@ -23,7 +26,7 @@ namespace Berserk.Messaging
 
         public static string Serialize(JsonMessage message)
         {
-            return JObject.FromObject(message, 
+            return JToken.FromObject(message, 
                 new JsonSerializer
                 {
                     NullValueHandling = NullValueHandling.Ignore
@@ -34,5 +37,12 @@ namespace Berserk.Messaging
         {
             return JToken.Parse(data).ToObject<JsonMessage>();
         }
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            Debug.Log(context.ToString());
+            errorContext.Handled = true;
+        }
+        
     }
 }

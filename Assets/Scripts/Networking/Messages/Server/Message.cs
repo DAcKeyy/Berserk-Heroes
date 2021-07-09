@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.Serialization;
 using Berserk.Messaging;
 using Berserk.Networking.Messages;
+using Newtonsoft.Json.Serialization;
 
 namespace Berserk.Messaging.Messages
 {
@@ -8,7 +10,7 @@ namespace Berserk.Messaging.Messages
     {
         public uint UserID { get; set; }
         public string AccessToken { get; set; }
-        public DateTime Date { get; set; }
+        //public DateTime Date { get; set; }
         public string Text { get; set; }
         public bool Vaild { get; set; }
         public JsonMessage MessageBody { get; set; }
@@ -19,7 +21,7 @@ namespace Berserk.Messaging.Messages
             UserID = 0;
             AccessToken = "";
             MessageBody = new JsonMessage();
-            Date = DateTime.Now;
+            Vaild = false;
         }
 
         public Message(string text, uint userID, string accessToken, JsonMessage messageBody)
@@ -28,7 +30,7 @@ namespace Berserk.Messaging.Messages
             UserID = userID;
             AccessToken = accessToken;
             MessageBody = messageBody;
-            Date = DateTime.Now;
+            Vaild = false;
         }
 
         public Message(string text, bool isValid ,uint userID, string accessToken, JsonMessage messageBody)
@@ -38,7 +40,12 @@ namespace Berserk.Messaging.Messages
             UserID = userID;
             AccessToken = accessToken;
             MessageBody = messageBody;
-            Date = DateTime.Now;
+        }
+        
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            errorContext.Handled = true;
         }
     }
 }

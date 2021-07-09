@@ -21,8 +21,9 @@ public class MessageHandeler : MonoBehaviour
 
     public async Task<Message> SendCommandMessage(Message message)
     {
+        //создаём таску, которая будет ждать конкретного ответа с сервера
         TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();
-        
+        //Если сообщение содержит слово Command то сообщение отпровляется, инче неееет
         if (!message.Text.Contains("Command "))
         {
             Debug.Log($"No \"Command\" in {message.Text} text message");
@@ -32,6 +33,7 @@ public class MessageHandeler : MonoBehaviour
         ServerManager.ServerManagerInstance.Send_Object_ToServer(message);
 
         string command = message.Text.Replace("Command ", "");
+        //Делегат на овтет с серврера с делаьнейшей проверкой на "является ли это ответом на кнокртеный запрос"
         Action<JToken, Type> SDKLNFDSHJOFSDNJLSDJLNF = delegate(JToken obj, Type type)
         {
             if (type == typeof(Message))
@@ -41,10 +43,6 @@ public class MessageHandeler : MonoBehaviour
                 
                 if (resivedMessage.Text.Contains(command))
                     tcs.SetResult(resivedMessage);
-                
-                
-                //надо ещё сюда таймаут ебануть
-                
             }
         };
         ServerManager.ServerManagerInstance.ServerResponseObjectEvent += SDKLNFDSHJOFSDNJLSDJLNF;
@@ -58,5 +56,3 @@ public class MessageHandeler : MonoBehaviour
         }
     }
 }
-
-    
